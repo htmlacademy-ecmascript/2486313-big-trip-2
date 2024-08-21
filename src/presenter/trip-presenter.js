@@ -5,20 +5,26 @@ import NewPointView from '../view/points-view.js';
 import EditForm from '../view/edit-form.js';
 
 export default class TripPresenter {
+  containerPointsView = new ContainerPointsView();
+  editForm = new EditForm();
+  sort = new NewSort();
 
-  constructor({pointsContainer}) {
+  constructor({pointsContainer, pointsModel}) {
     this.pointsContainer = pointsContainer;
+    this.pointsModel = pointsModel;
   }
 
   init() {
-    render(new NewSort(), this.pointsContainer);
-    render(new ContainerPointsView(), this.pointsContainer);
 
-    const ContainerPoints = document.querySelector('.trip-events__list');
-    for(let i = 0; i < 3; i++) {
-      render(new NewPointView(), ContainerPoints);
+    this.boardPoints = [...this.pointsModel.getPoints()];
+
+    render(this.sort, this.pointsContainer);
+    render(this.editForm, this.pointsContainer);
+    render(this.containerPointsView, this.pointsContainer);
+
+    for(let i = 0; i <= this.boardPoints.length; i++) {
+      render(new NewPointView({point: this.boardPoints[i]}), this.containerPointsView.getElement());
     }
-    const point = document.querySelector('.trip-events__item');
-    render(new EditForm(), point);
+
   }
 }
