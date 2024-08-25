@@ -2,7 +2,7 @@ import { render } from './render.js';
 import NewFiltersTitle from './view/filters-title-view.js';
 import DataInfoTrip from './view/data-info-view.js';
 import TripPresenter from './presenter/trip-presenter.js';
-import PointsModel from './model/model-point.js';
+import PointsModel from './model/point-model.js';
 
 const tripFilters = document.querySelector('.trip-controls__filters');
 const pointsContainer = document.querySelector('.trip-events');

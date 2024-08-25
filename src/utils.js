@@ -1,9 +1,27 @@
+import { MILLISECONDS_IN_MINUTES, HOURS_IN_DAY, dateFormats } from './const.js';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
-const DATE_FORMAT = 'MMM D';
 
-function humanizePointDate(date) {
-  return date ? dayjs(date).format(DATE_FORMAT) : '';
+function getFullDateIncompleteYear(date) {
+  return date ? dayjs.utc(date).format(dateFormats.fullDateIncompleteYear) : '';
+}
+
+function getMonthDay(date) {
+  return date ? dayjs.utc(date).format(dateFormats.monthDay) : '';
+}
+
+function getYearMonthDay(date) {
+  return date ? dayjs.utc(date).format(dateFormats.yearMonthDay) : '';
+}
+
+function getFullDateTime(date) {
+  return date ? dayjs.utc(date).format(dateFormats.fullDateTime) : '';
+}
+
+function getHoursMinutes(date) {
+  return date ? dayjs.utc(date).format(dateFormats.hoursMinutes) : '';
 }
 
 /**
@@ -16,4 +34,16 @@ function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-export { getRandomArrayElement, humanizePointDate };
+function getDifferencesDates(dateFrom, dateTo) {
+  const difference = dayjs.utc(dateTo).diff(dateFrom);
+
+  if (difference < MILLISECONDS_IN_MINUTES) {
+    return dayjs.utc(difference).format('mm[M]');
+  } else if (difference > MILLISECONDS_IN_MINUTES && difference < MILLISECONDS_IN_MINUTES * HOURS_IN_DAY) {
+    return dayjs.utc(difference).format('HH[H] mm[M]');
+  } else {
+    return dayjs.utc(difference).format('DD[D] HH[H] mm[M]');
+  }
+}
+
+export { getRandomArrayElement, getDifferencesDates, getMonthDay, getFullDateTime, getHoursMinutes, getYearMonthDay, getFullDateIncompleteYear };
