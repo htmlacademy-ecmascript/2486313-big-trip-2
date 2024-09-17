@@ -2,7 +2,7 @@ import { render, replace, remove } from '../framework/render.js';
 import NewSort from '../view/sort-view.js';
 import ContainerPointsView from '../view/container-points-view.js';
 import NewPointView from '../view/point-view.js';
-import EditForm from '../view/edit-form-view.js';
+import EditFormView from '../view/edit-form-view.js';
 
 export default class TripPresenter {
   containerPointsView = new ContainerPointsView();
@@ -31,7 +31,7 @@ export default class TripPresenter {
         destinations: this.boardDestinations,
       });
 
-      const editPointView = new EditForm({
+      const editPointView = new EditFormView({
         points: this.boardPoints[i],
         offers: this.boardOffers,
         destinations: this.boardDestinations,

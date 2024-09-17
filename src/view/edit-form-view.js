@@ -94,7 +94,7 @@ function createEditForm (points, offers, destinations) {
               </form>`);
 }
 
-export default class EditForm extends AbstractView{
+export default class EditFormView extends AbstractView{
   #points = null;
   #offers = null;
   #destinations = null;
