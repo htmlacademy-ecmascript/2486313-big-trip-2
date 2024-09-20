@@ -3,11 +3,13 @@ import NewSort from '../view/sort-view.js';
 import ContainerPointsView from '../view/container-points-view.js';
 import NewPointView from '../view/point-view.js';
 import EditFormView from '../view/edit-form-view.js';
+import FiltersTitle from '../view/filters-title-view.js';
 
+const filterTitle = new FiltersTitle();
+const tripFilters = document.querySelector('.trip-controls__filters');
 export default class TripPresenter {
   containerPointsView = new ContainerPointsView();
   sort = new NewSort();
-
 
   constructor({pointsContainer, pointsModel}) {
     this.pointsContainer = pointsContainer;
@@ -21,7 +23,13 @@ export default class TripPresenter {
     this.boardOffers = this.pointsModel.getOffers();
     this.boardDestinations = this.pointsModel.getDestinations();
 
+    render(filterTitle, tripFilters);
+    filterTitle.getSortFilterFuture(this.boardPoints);
+    filterTitle.getSortFilterPast(this.boardPoints);
+
     render(this.sort, this.pointsContainer);
+    this.sort.getSortTime(this.boardPoints);
+
     render(this.containerPointsView, this.pointsContainer);
 
     for(let i = 0; i < this.boardPoints.length; i++) {

@@ -1,4 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { remove, replace } from '../framework/render.js';
+import { getDifferencesDates } from '../utils.js';
 
 function createNewSort () {
   return `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -33,6 +35,20 @@ export default class NewSort extends AbstractView{
 
   get template() {
     return createNewSort();
+  }
+
+  getSortTime(points) {
+    const sortTime = this.element.querySelector('#sort-time');
+    sortTime.addEventListener('click', () => {
+      for (let i = 0; i < points.length; i++) {
+        const differenceDateFrom = getDifferencesDates(points[i].dateFrom, points[i].dateTo);
+        const differenceDateTo = getDifferencesDates(points[i + 1].dateFrom, points[i + 1].dateTo);
+        if (differenceDateFrom >= differenceDateTo) {
+          replace(points[i], points[i + 1]);
+        }
+        replace(points[i + 1], points[i]);
+      }
+    });
   }
 
 }

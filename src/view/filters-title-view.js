@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { remove } from '../framework/render.js';
 
 function createNewFilterTitle () {
   return `<form class="trip-filters" action="#" method="get">
@@ -26,12 +27,32 @@ function createNewFilterTitle () {
               </form>`;
 }
 
-export default class NewFiltersTitle extends AbstractView{
+export default class FiltersTitle extends AbstractView {
 
   get template() {
     return createNewFilterTitle();
   }
 
-}
+  getSortFilterFuture(points) {
+    const filterFuture = this.element.querySelector('#filter-future');
+    filterFuture.addEventListener('click', () => {
+      for (let i = 0; i <= points.length; i++) {
+        if (points[i].dateFrom >= new Date().toISOString()) {
+          remove(points[i]);
+        }
+      }
+    });
+  }
 
+  getSortFilterPast(points) {
+    const filterFuture = this.element.querySelector('#filter-past');
+    filterFuture.addEventListener('click', () => {
+      for (let i = 0; i <= points.length; i++) {
+        if (points[i].dateFrom <= new Date().toISOString()) {
+          remove(points[i]);
+        }
+      }
+    });
+  }
+}
 
