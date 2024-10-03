@@ -46,4 +46,8 @@ function getDifferencesDates(dateFrom, dateTo) {
   }
 }
 
-export { getRandomArrayElement, getDifferencesDates, getMonthDay, getFullDateTime, getHoursMinutes, getYearMonthDay, getFullDateIncompleteYear };
+function compareNumbers(a,b) {
+  return b - a;
+}
+
+export { compareNumbers, getRandomArrayElement, getDifferencesDates, getMonthDay, getFullDateTime, getHoursMinutes, getYearMonthDay, getFullDateIncompleteYear };
