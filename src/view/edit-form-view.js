@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getFullDateIncompleteYear } from '../utils.js';
 import { POINT_TYPES } from '../const.js';
 
@@ -94,27 +94,37 @@ function createEditForm (points, offers, destinations) {
               </form>`);
 }
 
-export default class EditForm {
+export default class EditFormView extends AbstractView{
+  #points = null;
+  #offers = null;
+  #destinations = null;
 
   constructor({points, offers, destinations}) {
-    this.points = points;
-    this.offers = offers;
-    this.destinations = destinations;
+    super();
+    this.#points = points;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
-  getTemplate() {
-    return createEditForm(this.points, this.offers, this.destinations);
+  get template() {
+    return createEditForm(this.#points, this.#offers, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  setListenerSubmit(onButtonSubmit) {
+    this.onButtonSubmit = onButtonSubmit;
   }
 
-  removeElement() {
-    this.element = null;
+  getListenerSubmit() {
+    this.element.querySelector('.event').addEventListener('submit', this.onButtonSubmit);
   }
+
+  setListenerClick(onButtonClick) {
+    this.onButtonClick = onButtonClick;
+  }
+
+  getListenerClick() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.onButtonClick);
+  }
+
+
 }

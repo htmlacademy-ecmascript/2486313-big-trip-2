@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getDifferencesDates, getMonthDay, getFullDateTime, getHoursMinutes, getYearMonthDay } from '../utils.js';
 
 function createEditPointTemplate(points, offers, destinations) {
@@ -49,27 +49,30 @@ function createEditPointTemplate(points, offers, destinations) {
   `;
 }
 
-export default class NewPointView {
+export default class NewPointView extends AbstractView{
+
+  #points = null;
+  #offers = null;
+  #destinations = null;
 
   constructor({points, offers, destinations}) {
-    this.points = points;
-    this.offers = offers;
-    this.destinations = destinations;
+    super();
+    this.#points = points;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
-  getTemplate() {
-    return createEditPointTemplate(this.points, this.offers, this.destinations);
+  get template() {
+    return createEditPointTemplate(this.#points, this.#offers, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  setListenerClick(onButtonClick) {
+    this.onButtonClick = onButtonClick;
   }
 
-  removeElement() {
-    this.element = null;
+  getListenerClick() {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.onButtonClick);
   }
+
 }
+
