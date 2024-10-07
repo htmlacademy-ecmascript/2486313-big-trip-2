@@ -1,6 +1,6 @@
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const MILLISECONDS_IN_MINUTES = 3600000;
+const MILLISECONDS_IN_MINUTES = 36e5;
 const HOURS_IN_DAY = 24;
 
 const dateFormats = {
