@@ -4,8 +4,8 @@ const mockPoints = [
   {
     id: 1,
     basePrice: 130,
-    dateFrom: '2024-07-09T12:55:00.000Z',
-    dateTo: '2024-07-09T13:25:00.000Z',
+    dateFrom: '2025-07-09T12:55:00.000Z',
+    dateTo: '2025-07-09T13:25:00.000Z',
     destination: 1,
     isFavorite: false,
     offers: [2,4],
@@ -14,8 +14,8 @@ const mockPoints = [
   {
     id: 2,
     basePrice: 1100,
-    dateFrom: '2024-07-10T13:55:00.000Z',
-    dateTo: '2024-07-11T10:22:00.000Z',
+    dateFrom: '2024-09-28T10:00:00.000Z',
+    dateTo: '2024-09-28T10:01:00.000Z',
     destination: 2,
     isFavorite: true,
     offers: [3,8,10],

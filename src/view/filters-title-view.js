@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+
 function createNewFilterTitle () {
   return `<form class="trip-filters" action="#" method="get">
                 <div class="trip-filters__filter">
@@ -26,12 +27,14 @@ function createNewFilterTitle () {
               </form>`;
 }
 
-export default class NewFiltersTitle extends AbstractView{
+export default class FiltersTitleView extends AbstractView {
 
   get template() {
     return createNewFilterTitle();
   }
 
+  getListenerFilters(handler) {
+    this.element.addEventListener('change', handler);
+  }
 }
-
 
