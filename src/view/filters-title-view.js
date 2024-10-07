@@ -27,7 +27,7 @@ function createNewFilterTitle () {
               </form>`;
 }
 
-export default class FiltersTitle extends AbstractView {
+export default class FiltersTitleView extends AbstractView {
 
   get template() {
     return createNewFilterTitle();
