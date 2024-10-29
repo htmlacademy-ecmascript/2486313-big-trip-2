@@ -74,5 +74,13 @@ export default class NewPointView extends AbstractView{
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.onButtonClick);
   }
 
+  setListenerFavorite(checkFavorite) {
+    this.checkFavorite = checkFavorite;
+  }
+
+  getListenerFavorite() {
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.checkFavorite);
+  }
+
 }
 
