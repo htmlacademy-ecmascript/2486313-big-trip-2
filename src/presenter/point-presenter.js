@@ -32,7 +32,7 @@ export default class PointPresenter {
   #openEditPoint(point, editPoint) {
     point.setListenerClick(() => {
       replace(editPoint, point);
-      window.addEventListener('keydown', this.#handlerEsc);
+      window.addEventListener('keydown', this.#handlerEsc.bind(null, point, editPoint));
     });
     point.getListenerClick();
   }
@@ -40,19 +40,19 @@ export default class PointPresenter {
   #closeEditPoint(point, editPoint) {
     editPoint.setListenerClick(() => {
       replace(point, editPoint);
-      window.removeEventListener('keydown', this.#handlerEsc);
+      window.removeEventListener('keydown', this.#handlerEsc.bind(null, point, editPoint));
     });
     editPoint.getListenerClick();
   }
 
-  #handlerEsc = (evt, point, editPoint) => {
+  #handlerEsc(point, editPoint, evt) {
     if (evt.key === 'Escape') {
       if (editPoint) {
         replace(point, editPoint);
       }
     }
-    window.removeEventListener('keydown', this.#handlerEsc);
-  };
+    window.removeEventListener('keydown', this.#handlerEsc());
+  }
 
   #drawPoints(point) {
     render(point, this.containerPointsView.element);
@@ -65,8 +65,6 @@ export default class PointPresenter {
 
     this.#closeEditPoint(point, editPoint);
     this.#openEditPoint(point, editPoint);
-
-    this.#handlerEsc(point, editPoint);
 
   }
 

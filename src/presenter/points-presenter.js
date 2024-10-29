@@ -31,20 +31,20 @@ export default class PointsPresenter {
     return points;
   }
 
-  #renderPoint(point, boardPoints, boardOffers, boardDestinations) {
-    const pointPresenter = new PointPresenter(point, boardPoints, boardOffers, boardDestinations, this.containerPointsView);
+  #renderPoint(point, boardOffers, boardDestinations) {
+    const pointPresenter = new PointPresenter(point, boardOffers, boardDestinations, this.containerPointsView);
     pointPresenter.init();
     this.#points.add(pointPresenter);
   }
 
-  #renderPoints(boardPoints, boardOffers, boardDestinations) {
-    this.points.forEach((point) => this.#renderPoint(point, boardPoints, boardOffers, boardDestinations));
+  #renderPoints(boardOffers, boardDestinations) {
+    this.points.forEach((point) => this.#renderPoint(point, boardOffers, boardDestinations));
   }
 
   #redrawPoints = (boardPoints) => {
     this.deleteAllPoints();
-    for(let i = 0; i <= boardPoints.lenght; i++) {
-      this.#renderPoints(boardPoints[i], this.boardOffers, this.boardDestinations);
+    for(let i = 0; i <= boardPoints.length; i++) {
+      this.#renderPoint(boardPoints[i], this.boardOffers, this.boardDestinations);
     }
   };
 
