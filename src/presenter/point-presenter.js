@@ -1,6 +1,7 @@
+
 import NewPointView from '../view/point-view.js';
 import EditFormView from '../view/edit-form-view.js';
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 
 export default class PointPresenter {
 
@@ -12,59 +13,62 @@ export default class PointPresenter {
   }
 
   #createPoint() {
-    const point = new NewPointView({
+    this.pointView = new NewPointView({
       points: this.point,
       offers: this.boardOffers,
       destinations: this.boardDestinations,
     });
-    return point;
   }
 
   #createEditPoint() {
-    const editPoint = new EditFormView({
+    this.editPointView = new EditFormView({
       points: this.point,
       offers: this.boardOffers,
       destinations: this.boardDestinations,
     });
-    return editPoint;
   }
 
-  #openEditPoint(point, editPoint) {
-    point.setListenerClick(() => {
-      replace(editPoint, point);
-      window.addEventListener('keydown', this.#handlerEsc.bind(null, point, editPoint));
+  #openEditPoint() {
+    this.pointView.setListenerClick(() => {
+      replace(this.editPointView, this.pointView);
+      window.addEventListener('keydown', this.#handlerEsc);
     });
-    point.getListenerClick();
+    this.pointView.getListenerClick();
   }
 
-  #closeEditPoint(point, editPoint) {
-    editPoint.setListenerClick(() => {
-      replace(point, editPoint);
-      window.removeEventListener('keydown', this.#handlerEsc.bind(null, point, editPoint));
+  #closeEditPoint() {
+    this.editPointView.setListenerClick(() => {
+      replace(this.pointView, this.editPointView);
+      window.removeEventListener('keydown', this.#handlerEsc);
     });
-    editPoint.getListenerClick();
+    this.editPointView.getListenerClick();
   }
 
-  #handlerEsc(point, editPoint, evt) {
+  #handlerEsc = (evt) => {
     if (evt.key === 'Escape') {
-      if (editPoint) {
-        replace(point, editPoint);
+      if (evt.target !== this.pointView) {
+        replace(this.pointView, this.editPointView);
+        window.removeEventListener('keydown', this.#handlerEsc);
       }
     }
-    window.removeEventListener('keydown', this.#handlerEsc());
+  };
+
+
+  #drawPoint() {
+    render(this.pointView, this.containerPointsView.element);
   }
 
-  #drawPoints(point) {
-    render(point, this.containerPointsView.element);
+  destroy() {
+    remove(this.pointView);
+    remove(this.editPointView);
   }
 
   init() {
-    const point = this.#createPoint();
-    const editPoint = this.#createEditPoint();
-    this.#drawPoints(point);
-
-    this.#closeEditPoint(point, editPoint);
-    this.#openEditPoint(point, editPoint);
+    this.#createPoint();
+    this.#createEditPoint();
+    this.#drawPoint();
+    this.#closeEditPoint();
+    this.#openEditPoint();
 
   }
 

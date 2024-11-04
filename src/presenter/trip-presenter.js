@@ -1,11 +1,13 @@
 import PointsPresenter from './points-presenter.js';
-import PointsModel from '../model/point-model.js';
-const pointsContainer = document.querySelector('.trip-events');
-const pointsModel = new PointsModel();
 export default class TripPresenter {
 
+  constructor({pointsContainer, pointsModel}) {
+    this.pointsContainer = pointsContainer;
+    this.pointsModel = pointsModel;
+  }
+
   init() {
-    const pointsPresenter = new PointsPresenter({pointsContainer, pointsModel});
+    const pointsPresenter = new PointsPresenter(this.pointsContainer, this.pointsModel);
     pointsPresenter.init();
   }
 }

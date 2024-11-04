@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 import NewSortView from '../view/sort-view.js';
 import ContainerPointsView from '../view/container-points-view.js';
 import FiltersTitleView from '../view/filters-title-view.js';
@@ -16,92 +16,93 @@ export default class PointsPresenter {
   activeSort = 'sort-day';
   #points = new Set();
 
-  constructor({pointsContainer, pointsModel}) {
+  constructor(pointsContainer, pointsModel) {
     this.pointsContainer = pointsContainer;
     this.pointsModel = pointsModel;
   }
 
-  deleteAllPoints = () => {
-    document.querySelectorAll('.trip-events__item').forEach((point) => point.remove());
-    document.querySelectorAll('.event--edit').forEach((editPoint) => editPoint.remove());
-  };
-
-  get points() {
-    const points = this.pointsModel.getPoints();
-    return points;
+  get pointsData() {
+    return this.pointsModel.getPoints();
   }
 
-  #renderPoint(point, boardOffers, boardDestinations) {
-    const pointPresenter = new PointPresenter(point, boardOffers, boardDestinations, this.containerPointsView);
-    pointPresenter.init();
+  get offers() {
+    const offers = this.pointsModel.getOffers();
+    return offers;
+  }
+
+  get destinations() {
+    const destinations = this.pointsModel.getDestinations();
+    return destinations;
+  }
+
+  get filteredPoints() {
+    switch(this.activeFilter) {
+      case 'future':
+        return this.pointsData.filter((pointData) => pointData.dateFrom < new Date().toISOString());
+      case 'everything':
+        return this.pointsData;
+      case 'present':
+        return this.pointsData.filter((pointData) => pointData.dateFrom === new Date().toISOString());
+      case 'past':
+        return this.pointsData.filter((pointData) => pointData.dateFrom > new Date().toISOString());
+    }
+  }
+
+  get sortedPoints() {
+    switch (this.activeSort) {
+      case 'sort-day':
+        return this.filteredPoints.sort((a,b) => b.dateFrom > a.dateFrom ? 1 : -1);
+      case 'sort-time':
+        return this.filteredPoints.sort((a,b) => getDifferencesDates(b.dateTo, b.dateFrom) > getDifferencesDates(a.dateTo, a.dateFrom) ? 1 : -1);
+      case 'sort-price':
+        return this.filteredPoints.sort((a,b) => b.basePrice > a.basePrice ? 1 : -1);
+    }
+  }
+
+  #renderPoint(point) {
+    const pointPresenter = new PointPresenter(point, this.offers, this.destinations, this.containerPointsView);
     this.#points.add(pointPresenter);
   }
 
-  #renderPoints(boardOffers, boardDestinations) {
-    this.points.forEach((point) => this.#renderPoint(point, boardOffers, boardDestinations));
+  destroyAllPoints = () => {
+    this.#points.forEach((pointPresenter) => {
+      pointPresenter.destroy();
+    });
+    this.#points.clear();
+  };
+
+  #redrawPoints() {
+    this.destroyAllPoints();
+    this.sortedPoints.forEach((pointData) => {
+      this.#renderPoint(pointData);
+    });
+    this.#points.forEach((pointPresenter) => {
+      pointPresenter.init();
+    });
   }
 
-  #redrawPoints = (boardPoints) => {
-    this.deleteAllPoints();
-    for(let i = 0; i <= boardPoints.length; i++) {
-      this.#renderPoint(boardPoints[i], this.boardOffers, this.boardDestinations);
-    }
-  };
-
-  detectClickOnFilter = (evt) => {
+  onClickFilterButtons = (evt) => {
     this.activeFilter = evt.target.value;
-    if (this.activeFilter === 'future') {
-      const boardPointsFuture = this.boardPoints.filter((point) => point.dateFrom < new Date().toISOString());
-      this.activeFilter = boardPointsFuture;
-      this.#redrawPoints(this.activeFilter);
-    }
-    if (this.activeFilter === 'everything') {
-      this.activeFilter = this.boardPoints;
-      this.#redrawPoints(this.activeFilter);
-    }
-    if (this.activeFilter === 'present') {
-      const boardPointsPresent = this.boardPoints.filter((point) => point.dateFrom === new Date().toISOString());
-      this.activeFilter = boardPointsPresent;
-      this.#redrawPoints(this.activeFilter);
-    }
-    if (this.activeFilter === 'past') {
-      const boardPointsPast = this.boardPoints.filter((point) => point.dateFrom > new Date().toISOString());
-      this.activeFilter = boardPointsPast;
-      this.#redrawPoints(this.activeFilter);
-    }
+    this.#redrawPoints();
   };
 
-  detectClickOnSort = (evt) => {
+  onClickSortButtons = (evt) => {
     this.activeSort = evt.target.value;
-    if (this.activeSort === 'sort-day') {
-      const boardPointsSortDay = this.activeFilter.sort((a, b) => b.dateFrom > a.dateFrom ? 1 : -1);
-      this.#redrawPoints(boardPointsSortDay);
-    }
-    if (this.activeSort === 'sort-time') {
-      const boardPointsSortDay = this.activeFilter.sort((a, b) => getDifferencesDates(b.dateFrom, b.dateTo) > getDifferencesDates(a.dateFrom, a.dateTo) ? 1 : -1);
-      this.#redrawPoints(boardPointsSortDay);
-    }
-    if (this.activeSort === 'sort-price') {
-      const boardPointsSortDay = this.activeFilter.sort((a, b) => b.basePrice > a.basePrice ? 1 : -1);
-      this.#redrawPoints(boardPointsSortDay);
-    }
+    this.#redrawPoints();
   };
 
 
   init() {
-    this.boardPoints = [...this.pointsModel.getPoints()];
-    this.boardOffers = this.pointsModel.getOffers();
-    this.boardDestinations = this.pointsModel.getDestinations();
 
     render(this.filtersTitle, tripFilters);
-    this.filtersTitle.getListenerFilters(this.detectClickOnFilter);
+    this.filtersTitle.getListenerFilters(this.onClickFilterButtons);
 
     render(this.sort, this.pointsContainer);
-    this.sort.getListenerSort(this.detectClickOnSort);
+    this.sort.getListenerSort(this.onClickSortButtons);
 
     render(this.containerPointsView, this.pointsContainer);
 
-    this.#redrawPoints(this.boardPoints.sort((a, b) => b.dateFrom > a.dateFrom ? 1 : -1));
+    this.#redrawPoints();
 
   }
 }
