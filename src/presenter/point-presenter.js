@@ -1,15 +1,22 @@
-
 import NewPointView from '../view/point-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import { render, replace, remove } from '../framework/render.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 export default class PointPresenter {
 
-  constructor(point, boardOffers, boardDestinations, containerPointsView) {
+  #handleModeChange = null;
+  #mode = Mode.DEFAULT;
+
+  constructor(point, boardOffers, boardDestinations, containerPointsView, onModeChange) {
     this.point = point;
     this.boardOffers = boardOffers;
     this.boardDestinations = boardDestinations;
     this.containerPointsView = containerPointsView;
+    this.#handleModeChange = onModeChange;
   }
 
   #createPoint() {
@@ -29,30 +36,40 @@ export default class PointPresenter {
   }
 
   #openEditPoint() {
-    this.pointView.setListenerClick(() => {
-      replace(this.editPointView, this.pointView);
-      window.addEventListener('keydown', this.#handlerEsc);
-    });
+    this.pointView.setListenerClick(() => this.replaceCardToForm());
     this.pointView.getListenerClick();
   }
 
   #closeEditPoint() {
-    this.editPointView.setListenerClick(() => {
-      replace(this.pointView, this.editPointView);
-      window.removeEventListener('keydown', this.#handlerEsc);
-    });
+    this.editPointView.setListenerClick(() => this.replaceFormToCard());
     this.editPointView.getListenerClick();
+  }
+
+  replaceCardToForm() {
+    replace(this.editPointView, this.pointView);
+    window.addEventListener('keydown', this.#handlerEsc);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
+  }
+
+  replaceFormToCard() {
+    replace(this.pointView, this.editPointView);
+    window.removeEventListener('keydown', this.#handlerEsc);
+    this.#mode = Mode.DEFAULT;
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.replaceFormToCard();
+    }
   }
 
   #handlerEsc = (evt) => {
     if (evt.key === 'Escape') {
-      if (evt.target !== this.pointView) {
-        replace(this.pointView, this.editPointView);
-        window.removeEventListener('keydown', this.#handlerEsc);
-      }
+      evt.preventDefault();
+      this.replaceFormToCard();
     }
   };
-
 
   #drawPoint() {
     render(this.pointView, this.containerPointsView.element);
@@ -62,6 +79,7 @@ export default class PointPresenter {
     remove(this.pointView);
     remove(this.editPointView);
   }
+
 
   init() {
     this.#createPoint();

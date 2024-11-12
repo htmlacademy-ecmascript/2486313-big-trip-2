@@ -26,25 +26,23 @@ export default class PointsPresenter {
   }
 
   get offers() {
-    const offers = this.pointsModel.getOffers();
-    return offers;
+    return this.pointsModel.getOffers();
   }
 
   get destinations() {
-    const destinations = this.pointsModel.getDestinations();
-    return destinations;
+    return this.pointsModel.getDestinations();
   }
 
   get filteredPoints() {
     switch(this.activeFilter) {
       case 'future':
-        return this.pointsData.filter((pointData) => pointData.dateFrom < new Date().toISOString());
+        return this.pointsData.filter((pointData) => new Date(pointData.dateFrom) < new Date());
       case 'everything':
         return this.pointsData;
       case 'present':
-        return this.pointsData.filter((pointData) => pointData.dateFrom === new Date().toISOString());
+        return this.pointsData.filter((pointData) => new Date(pointData.dateFrom) === new Date());
       case 'past':
-        return this.pointsData.filter((pointData) => pointData.dateFrom > new Date().toISOString());
+        return this.pointsData.filter((pointData) => new Date(pointData.dateFrom) > new Date());
     }
   }
 
@@ -60,15 +58,19 @@ export default class PointsPresenter {
   }
 
   #renderPoint(point) {
-    const pointPresenter = new PointPresenter(point, this.offers, this.destinations, this.containerPointsView);
+    const pointPresenter = new PointPresenter(point, this.offers, this.destinations, this.containerPointsView, this.#handleModeChange);
     this.#points.add(pointPresenter);
   }
 
-  destroyAllPoints = () => {
+  destroyAllPoints() {
     this.#points.forEach((pointPresenter) => {
       pointPresenter.destroy();
     });
     this.#points.clear();
+  }
+
+  #handleModeChange = () => {
+    this.#points.forEach((pointPresenter) => pointPresenter.resetView());
   };
 
   #redrawPoints() {
