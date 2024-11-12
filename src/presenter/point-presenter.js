@@ -80,6 +80,7 @@ export default class PointPresenter {
     remove(this.editPointView);
   }
 
+  // Реализация клика по звёздочки
 
   init() {
     this.#createPoint();
