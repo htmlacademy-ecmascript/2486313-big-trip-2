@@ -12,7 +12,7 @@ export const destinations = [
     description: 'Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.',
     name: 'Geneva',
     pictures: [{
-      src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+      src: 'https://loremflickr.com/g/320/240/geneva',
       description: 'Some building'
     }]
   },
@@ -21,7 +21,7 @@ export const destinations = [
     description: 'Amsterdam is beautiful city',
     name: 'Amsterdam',
     pictures: [{
-      src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+      src: 'https://loremflickr.com/g/320/240/amsterdam',
       description: 'Some building'
     }]
   },
