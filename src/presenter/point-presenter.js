@@ -24,14 +24,16 @@ export default class PointPresenter {
       points: this.point,
       offers: this.boardOffers,
       destinations: this.boardDestinations,
+      onPointClick: this.replaceCardToForm,
     });
   }
 
   #createEditPoint() {
     this.editPointView = new EditFormView({
-      points: this.point,
+      point: this.point,
       offers: this.boardOffers,
       destinations: this.boardDestinations,
+      onFormClick: this.replaceFormToCard,
     });
   }
 
@@ -86,9 +88,8 @@ export default class PointPresenter {
     this.#createPoint();
     this.#createEditPoint();
     this.#drawPoint();
-    this.#closeEditPoint();
     this.#openEditPoint();
-
+    this.#closeEditPoint();
   }
 
 }
