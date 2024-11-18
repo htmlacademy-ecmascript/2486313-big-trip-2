@@ -1,10 +1,12 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { getFullDateIncompleteYear } from '../utils.js';
 import { POINT_TYPES } from '../const.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 function createEditForm (point, offers, destinations) {
 
-  const { basePrice, dateFrom, dateTo, type, isTypePoint, isCityPoint } = point;
+  const { basePrice, type, isTypePoint, isCityPoint, dueDateFrom, dueDateTo } = point;
   const typeOffers = offers.find((off) => off.type === point.isTypePoint).offers;
   const pointOffers = typeOffers.filter((typeOffer) => point.offers.includes(typeOffer.id));
   const pointDestinations = destinations.find((des) => des.id === isCityPoint);
@@ -44,10 +46,10 @@ function createEditForm (point, offers, destinations) {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${getFullDateIncompleteYear(dateFrom)}">
+                    <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${dueDateFrom}">
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${getFullDateIncompleteYear(dateTo)}">
+                    <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${dueDateTo}">
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -97,6 +99,8 @@ function createEditForm (point, offers, destinations) {
 export default class EditFormView extends AbstractStatefulView{
   #offers = null;
   #destinations = null;
+  #DatepickerStart = null;
+  #DatepickerEnd = null;
 
   constructor({point, offers, destinations}) {
     super();
@@ -107,6 +111,18 @@ export default class EditFormView extends AbstractStatefulView{
     this.#handlerUpdateTypePoint();
     this.#handlerOnClickOffer();
     this.#handlerOnRestoreCity();
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
+  }
+
+  static restoreTaskToState(pointData) {
+    return {
+      ...pointData,
+      isTypePoint: pointData.type,
+      isCityPoint: pointData.destination,
+      dueDateFrom: getFullDateIncompleteYear(pointData.dateFrom),
+      dueDateTo: getFullDateIncompleteYear(pointData.dateTo),
+    };
   }
 
   _restoreHandlers() {
@@ -114,6 +130,44 @@ export default class EditFormView extends AbstractStatefulView{
     this.#handlerUpdateTypePoint();
     this.#handlerOnClickOffer();
     this.#handlerOnRestoreCity();
+    this.#setDatepickerStart();
+    this.#setDatepickerEnd();
+  }
+
+  #dueDateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dueDateFrom: userDate,
+    });
+  };
+
+  #dueDateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dueDateTo: userDate,
+    });
+  };
+
+  #setDatepickerStart () {
+    if (this.element.querySelector('[name="event-start-time"]').click) {
+      this.#DatepickerStart = flatpickr(this.element.querySelector('[name="event-start-time"]'), {
+        dateFormat: 'y/m/d H:i',
+        defaultDate: this._state.dueDateFrom,
+        minDate: 'today',
+        enableTime: true,
+        onChange: this.#dueDateFromChangeHandler,
+      });
+    }
+  }
+
+  #setDatepickerEnd () {
+    if (this.element.querySelector('[name="event-end-time"]').click) {
+      this.#DatepickerStart = flatpickr(this.element.querySelector('[name="event-end-time"]'), {
+        dateFormat: 'y/m/d H:i',
+        defaultDate: this._state.dueDateTo,
+        minDate: 'today',
+        enableTime: true,
+        onChange: this.#dueDateToChangeHandler,
+      });
+    }
   }
 
   #handlerOnRestoreCity () {
@@ -148,13 +202,6 @@ export default class EditFormView extends AbstractStatefulView{
     });
   }
 
-  static restoreTaskToState(pointData) {
-    return {
-      ...pointData,
-      isTypePoint: pointData.type,
-      isCityPoint: pointData.destination,
-    };
-  }
 
   get template() {
     return createEditForm(this._state, this.#offers, this.#destinations);
