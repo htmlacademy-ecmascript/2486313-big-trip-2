@@ -102,7 +102,7 @@ export default class EditFormView extends AbstractStatefulView{
   #DatepickerStart = null;
   #DatepickerEnd = null;
 
-  constructor({point, offers, destinations}) {
+  constructor({point, offers, destinations, onClickDelete, onClickCloseEditPoint}) {
     super();
     this._setState(EditFormView.restoreTaskToState(point));
     this.#offers = offers;
@@ -113,6 +113,9 @@ export default class EditFormView extends AbstractStatefulView{
     this.#handlerOnRestoreCity();
     this.#setDatepickerStart();
     this.#setDatepickerEnd();
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', onClickDelete);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', onClickCloseEditPoint);
   }
 
   static restoreTaskToState(pointData) {
@@ -206,14 +209,5 @@ export default class EditFormView extends AbstractStatefulView{
   get template() {
     return createEditForm(this._state, this.#offers, this.#destinations);
   }
-
-  setListenerClick(onButtonClick) {
-    this.onButtonClick = onButtonClick;
-  }
-
-  getListenerClick() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.onButtonClick);
-  }
-
 
 }
