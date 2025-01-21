@@ -1,13 +1,17 @@
 import PointsPresenter from './points-presenter.js';
 export default class TripPresenter {
 
-  constructor({pointsContainer, pointsModel}) {
+  #pointsModel = null;
+  #filterModel = null;
+
+  constructor({pointsContainer, pointsModel, filterModel}) {
     this.pointsContainer = pointsContainer;
-    this.pointsModel = pointsModel;
+    this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
   }
 
   init() {
-    const pointsPresenter = new PointsPresenter(this.pointsContainer, this.pointsModel);
+    const pointsPresenter = new PointsPresenter({pointsContainer: this.pointsContainer, pointsModel: this.#pointsModel, filterModel: this.#filterModel});
     pointsPresenter.init();
   }
 }

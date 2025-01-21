@@ -24,4 +24,23 @@ const defaultNewPoint = [
   }
 ];
 
-export {POINT_TYPES, MILLISECONDS_IN_MINUTES, HOURS_IN_DAY, defaultNewPoint, dateFormats};
+const UserAction = {
+  ADD_POINT: 'ADD_POINT',
+  UPDATE_POINT: 'UPDATE_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
+export {POINT_TYPES, MILLISECONDS_IN_MINUTES, HOURS_IN_DAY, defaultNewPoint, dateFormats, UpdateType, UserAction, FilterType};
